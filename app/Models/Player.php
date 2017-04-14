@@ -52,6 +52,19 @@ class Player extends Model
         return $ishit;
     }
     
+    public function IsDead() {
+        $ships = $this->Ships();
+        $isplayerdead = true;
+        $ships->each(function($ship) use (&$isplayerdead) {
+            if(!$ship->IsDestroyed()) {
+                $isplayerdead = false;
+                return false; // break each loop
+            }
+        });
+        
+        return $isplayerdead;
+    }
+    
     public function SetupShips() {
         
         if($this->Color) {
@@ -124,8 +137,8 @@ class Player extends Model
         
     }
     
-    public function ShootAt($x, $y) {
-        $ishit = $this->CheckIfHit($x, $y);
+    public function ShootAt($targetplayer, $x, $y) {
+        $ishit = $targetplayer->CheckIfHit($x, $y);
 
         $shot = Shot::create([
             'PositionX' => $x,

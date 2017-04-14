@@ -19,7 +19,17 @@ class GameController extends Controller
         session(['playerid' => null]);
         
         return redirect('game/play/' . $game->GameID);
-    } 
+    }
+    
+    public function end()
+    {
+        return view('end');
+    }
+    
+    public function index()
+    {
+        return view('index');
+    }
     
     public function play(Game $game)
     {
@@ -59,6 +69,14 @@ class GameController extends Controller
         {
             $player = Player::find($playerid);
         }
+        
+        $isover = $game->IsOver();
+        
+        if($isover) {
+            $playerdead = $player->IsDead();
+            $game->delete();
+            return redirect('/game/end')->with('result', ($playerdead ? '' : 'win'));
+        }
 
         $shots = $player->Shots()->get();
         
@@ -81,7 +99,7 @@ class GameController extends Controller
         $player = Player::find($playerid);
         $game = $player->Game()->first();
         $shots = $player->Shots();
-        $computer = $game->Players()->where('color', ($player->Color ? 0 : 1))->get()->first();
+        $computer = $game->GetOtherPlayer($player);
         
         $this->validate($request, [
             'positionx' => 'integer|max:10|required',
@@ -96,9 +114,9 @@ class GameController extends Controller
             return redirect('/game/play/' . $game->GameID)->with('errors', collect(['You have already fired at that spot.']));
         }
         
-        $result = $player->ShootAt($positionx, $positiony);
+        $result = $player->ShootAt($computer, $positionx, $positiony);
         
-        $computerresult = $this->ComputerTurnResult($game, $computer);
+        $computerresult = $this->ComputerTurnResult($game, $computer, $player);
         
         return redirect('/game/play/' . $game->GameID)->with([
             'shotResult' => ($result ? 'hit' : 'miss'),
@@ -106,7 +124,7 @@ class GameController extends Controller
         ]);
     }
     
-    private function ComputerTurnResult($game, $computer) {
+    private function ComputerTurnResult($game, $computer, $player) {
         $isnewshot = false;
         $shots = $computer->Shots();
         $failcount = 0;
@@ -130,7 +148,7 @@ class GameController extends Controller
             return false;
         }
         
-        return $computer->ShootAt($positionx, $positiony);
+        return $computer->ShootAt($player, $positionx, $positiony);
 
     }
 

@@ -12,7 +12,8 @@ class Ship extends Model
     
     public function AddHit() {
         // Make sure hits don't go over the length
-        $this->Hits = min($this->Length, $this->Hits + 1);
+        $this->Hits = min($this->Length, ($this->Hits + 1) );
+        $this->save();
     }
     
     public function IsDestroyed() {

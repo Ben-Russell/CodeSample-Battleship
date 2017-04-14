@@ -14,4 +14,25 @@ class Game extends Model
     {
         return $this->hasMany('App\Models\Player', 'GameID');
     }
+    
+    public function GetOtherPlayer($player)
+    {
+        return $this->Players()->where('color', ($player->Color ? 0 : 1))->get()->first();
+    }
+    
+    public function IsOver()
+    {
+        $isover = false;
+        
+        $players = $this->Players();
+        
+        $players->each(function($player) use(&$isover) {
+            if($player->IsDead()) {
+                $isover = true;
+                return false; // break each loop
+            }
+        });
+        
+        return $isover;
+    }
 }
