@@ -12,7 +12,7 @@ class Player extends Model
     protected $guarded = [];
     
     public function Game() {
-        return $this->belongsTo('App\Models\Game', 'PlayerID');    
+        return $this->belongsTo('App\Models\Game', 'GameID');    
     }
     
     public function Ships() {
@@ -27,13 +27,13 @@ class Player extends Model
         $ishit = false;
         $ships = $this->Ships();
         
-        $ships->each(function($ship) use(&$ishit) {
+        $ships->each(function($ship) use(&$ishit, &$x, &$y) {
             // Some math to check if the shot point is in the ship
             
             $shipxmin = min($ship->StartX, $ship->EndX);
             $shipxmax = max($ship->StartX, $ship->EndX);
             
-            $shipymax = min($ship->StartY, $ship->EndY);
+            $shipymin = min($ship->StartY, $ship->EndY);
             $shipymax = max($ship->StartY, $ship->EndY);
             
             if(
@@ -125,15 +125,15 @@ class Player extends Model
     }
     
     public function ShootAt($x, $y) {
-        $ishit = $this->CheckIfHit($positionx, $positiony);
+        $ishit = $this->CheckIfHit($x, $y);
 
         $shot = Shot::create([
-            'PositionX' => $positionx,
-            'PositionY' => $positiony,
+            'PositionX' => $x,
+            'PositionY' => $y,
             'IsHit' => $ishit
         ]);
         
-        $this->Shots($shot)->save();
+        $this->Shots()->save($shot);
         
         return $ishit;
     }

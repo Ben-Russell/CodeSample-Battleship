@@ -7,8 +7,8 @@
 	Game # {{ $game->GameID }} -
 	{{ $player->Color ? 'Red' : 'Blue' }} Player
 	
-	@if(isset($shotResult))
-		@if($shotResult)
+	@if( session('shotResult') )
+		@if( session('shotResult') == 'hit' )
 			<div class="alert alert-success">
 				You have hit a ship!
 			</div>
@@ -19,8 +19,8 @@
 		@endif
 	@endif
 	
-	@if(isset($computerResult))
-		@if($shotResult)
+	@if( session('computerResult') )
+		@if( session('computerResult') == 'hit' )
 			<div class="alert alert-danger">
 				One of your ships have been hit!
 			</div>
@@ -31,6 +31,16 @@
 		@endif
 	@endif
 	
+	
+	@if (count($errors) > 0)
+		<div class="alert alert-danger">
+			<ul>
+				@foreach ($errors->all() as $error)
+					<li>{{ $error }}</li>
+				@endforeach
+			</ul>
+		</div>
+	@endif
 	<form id="GameBoard" method="POST" action="/game/shoot">
 		
 		{{ csrf_field() }}
@@ -43,7 +53,7 @@
 				@for ($x=0; $x<=9; $x++)
 					<div class="boardsquare col-sm-1">
 						@php
-							$shot = $shots->where('PositionX', $x)->where('PositionY', $y)->get();
+							$shot = $shots->where('PositionX', $x)->where('PositionY', $y);
 						@endphp
 						@if ($shot->count())
 							@if ($shot->first()->IsHit)
@@ -61,6 +71,8 @@
 		@endfor
 
 	</form>
+
+	<a href="/">< Home</a>
 	
 </div>
 

@@ -15,6 +15,9 @@ class GameController extends Controller
     {
         $game = Game::create();
         
+        // Create a new player session
+        session(['playerid' => null]);
+        
         return redirect('game/play/' . $game->GameID);
     } 
     
@@ -24,7 +27,7 @@ class GameController extends Controller
         
         if(is_null($playerid)) {
             // Player is not already in session
-            
+
             if($game->Players->count() >= 1) {
                 // Guard against someone else trying to play the same game
                 return redirect('/')->with('errors', collect(['Someone is already in that Game']));
@@ -56,9 +59,8 @@ class GameController extends Controller
         {
             $player = Player::find($playerid);
         }
-        
-        $shots = $player->Shots();
-        
+
+        $shots = $player->Shots()->get();
         
         return view('game')->with([
             'game' => $game,
@@ -77,35 +79,34 @@ class GameController extends Controller
         }
         
         $player = Player::find($playerid);
-        $game = Player->Game();
+        $game = $player->Game()->first();
         $shots = $player->Shots();
         $computer = $game->Players()->where('color', ($player->Color ? 0 : 1))->get()->first();
         
-        $this->validate(request, [
+        $this->validate($request, [
             'positionx' => 'integer|max:10|required',
             'positiony' => 'integer|max:10|required'
         ]);
         
-        $positionx = request->input('positionx');
-        $positiony = request->input('positiony');
+        $positionx = $request->input('positionx');
+        $positiony = $request->input('positiony');
         
         if($shots->where('PositionX', $positionx)->where('PositionY', $positiony)->get()->count()) {
             // Guard against firing in same location
             return redirect('/game/play/' . $game->GameID)->with('errors', collect(['You have already fired at that spot.']));
         }
         
-        $result = $player->ShootAt($positionX, $positionY);
+        $result = $player->ShootAt($positionx, $positiony);
         
-        $computerresult = ComputerTurnResult($game, $computer);
+        $computerresult = $this->ComputerTurnResult($game, $computer);
         
-        
-        return redirect('/game/play/' . $game-GameID)->with([
-            'shotResult' => $result,
-            'computerResult' => $computerresult
+        return redirect('/game/play/' . $game->GameID)->with([
+            'shotResult' => ($result ? 'hit' : 'miss'),
+            'computerResult' => ($computerresult ? 'hit' : 'miss')
         ]);
     }
     
-    private ComputerTurnResult($game, $computer) {
+    private function ComputerTurnResult($game, $computer) {
         $isnewshot = false;
         $shots = $computer->Shots();
         $failcount = 0;
@@ -129,7 +130,7 @@ class GameController extends Controller
             return false;
         }
         
-        return $computer->ShootAt($positionX, $positionY);
+        return $computer->ShootAt($positionx, $positiony);
 
     }
 
