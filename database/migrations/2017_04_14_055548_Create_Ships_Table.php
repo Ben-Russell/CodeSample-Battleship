@@ -30,6 +30,7 @@ class CreateShipsTable extends Migration
             $table->integer('EndY');
             
             $table->integer('PlayerID')
+                ->default(0)
                 ->unsigned();
             
             $table->foreign('PlayerID')

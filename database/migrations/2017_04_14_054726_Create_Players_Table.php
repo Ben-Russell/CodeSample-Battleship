@@ -16,11 +16,10 @@ class CreatePlayersTable extends Migration
         Schema::create('Players', function (Blueprint $table) {
             $table->increments('PlayerID');
             
-            $table->string('Name', 50);
-            
             $table->tinyInteger('Color');
             
             $table->integer('GameID')
+                ->default(0)
                 ->unsigned();
             
             $table->foreign('GameID')

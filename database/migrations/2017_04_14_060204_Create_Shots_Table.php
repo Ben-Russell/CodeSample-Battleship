@@ -24,6 +24,7 @@ class CreateShotsTable extends Migration
             $table->boolean('IsHit');
             
             $table->integer('PlayerID')
+                ->defaulat(0)
                 ->unsigned();
             
             $table->foreign('PlayerID')
