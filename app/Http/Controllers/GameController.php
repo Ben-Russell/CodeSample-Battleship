@@ -54,10 +54,13 @@ class GameController extends Controller
             $player = Player::find($playerid);
         }
         
+        $shots = $player->Shots();
+        
         
         return view('game')->with([
             'game' => $game,
-            'player' => $player
+            'player' => $player,
+            'shots' => $shots
         ]);
     }
     

@@ -10,13 +10,18 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
         <style>
             .container {
-                margin-top: 15%;
+                margin-top: 5%;
             }
             .row {
                 margin-top: 10px;
             }
             form {
                 margin-bottom: 50px;
+            }
+            
+            .boardsquare > button {
+                width:100%;
+                height:50px;
             }
         </style>
     </head>
