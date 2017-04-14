@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Ship extends Model
 {   
-    protected $primarykey = 'ShipID';
+    protected $table = 'Ships';
+    protected $primaryKey = 'ShipID';
     protected $guarded = [];
 }

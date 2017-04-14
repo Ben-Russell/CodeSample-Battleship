@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Player extends Model
 {   
-    protected $primarykey = 'PlayerID';
+    protected $table = 'Players';
+    protected $primaryKey = 'PlayerID';
     protected $guarded = [];
 }
