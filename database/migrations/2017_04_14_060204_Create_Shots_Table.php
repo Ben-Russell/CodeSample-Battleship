@@ -21,10 +21,11 @@ class CreateShotsTable extends Migration
             
             $table->integer('PositionY');
             
-            $table->boolean('IsHit');
+            $table->boolean('IsHit')
+                ->default(0);
             
             $table->integer('PlayerID')
-                ->defaulat(0)
+                ->default(0)
                 ->unsigned();
             
             $table->foreign('PlayerID')

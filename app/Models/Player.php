@@ -11,6 +11,10 @@ class Player extends Model
     protected $primaryKey = 'PlayerID';
     protected $guarded = [];
     
+    public function Game() {
+        return $this->belongsTo('App\Models\Game', 'PlayerID');    
+    }
+    
     public function Ships() {
         return $this->hasMany('App\Models\Ship', 'PlayerID');    
     }
@@ -19,6 +23,34 @@ class Player extends Model
         return $this->hasMany('App\Models\Shot', 'PlayerID');
     }
     
+    public function CheckIfHit($x, $y) {
+        $ishit = false;
+        $ships = $this->Ships();
+        
+        $ships->each(function($ship) use(&$ishit) {
+            // Some math to check if the shot point is in the ship
+            
+            $shipxmin = min($ship->StartX, $ship->EndX);
+            $shipxmax = max($ship->StartX, $ship->EndX);
+            
+            $shipymax = min($ship->StartY, $ship->EndY);
+            $shipymax = max($ship->StartY, $ship->EndY);
+            
+            if(
+                $shipxmin <= $x && $x <= $shipxmax &&
+                $shipymin <= $y && $y <= $shipymax
+              )
+            {
+                $ishit = true;
+                $ship->AddHit();
+                
+                return false; // This will break the each loop early
+            }
+            
+        });
+        
+        return $ishit;
+    }
     
     public function SetupShips() {
         
@@ -90,5 +122,19 @@ class Player extends Model
             
         }
         
+    }
+    
+    public function ShootAt($x, $y) {
+        $ishit = $this->CheckIfHit($positionx, $positiony);
+
+        $shot = Shot::create([
+            'PositionX' => $positionx,
+            'PositionY' => $positiony,
+            'IsHit' => $ishit
+        ]);
+        
+        $this->Shots($shot)->save();
+        
+        return $ishit;
     }
 }

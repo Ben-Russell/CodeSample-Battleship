@@ -7,6 +7,30 @@
 	Game # {{ $game->GameID }} -
 	{{ $player->Color ? 'Red' : 'Blue' }} Player
 	
+	@if(isset($shotResult))
+		@if($shotResult)
+			<div class="alert alert-success">
+				You have hit a ship!
+			</div>
+		@else
+			<div class="alert alert-warning">
+				You have missed!
+			</div>
+		@endif
+	@endif
+	
+	@if(isset($computerResult))
+		@if($shotResult)
+			<div class="alert alert-danger">
+				One of your ships have been hit!
+			</div>
+		@else
+			<div class="alert alert-success">
+				The enemy shot misses your ships!
+			</div>
+		@endif
+	@endif
+	
 	<form id="GameBoard" method="POST" action="/game/shoot">
 		
 		{{ csrf_field() }}
