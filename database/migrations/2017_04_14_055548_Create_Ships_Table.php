@@ -21,7 +21,8 @@ class CreateShipsTable extends Migration
             
             $table->integer('Length');
             
-            $table->integer('Hits');
+            $table->integer('Hits')
+                ->default(0);
             
             $table->integer('StartX');
             $table->integer('StartY');

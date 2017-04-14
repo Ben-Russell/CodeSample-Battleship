@@ -16,5 +16,4 @@ Route::get('/', function () {
 });
 
 Route::post('game/create', 'GameController@create');
-Route::post('game/join', 'GameController@join');
 Route::get('game/play/{game}', 'GameController@play');

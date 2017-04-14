@@ -15,36 +15,29 @@ class GameController extends Controller
         $game = Game::create();
         
         return redirect('game/play/' . $game->GameID);
-    }
-    
-    public function join(Request $request)
-    {
-        $gameid = $request->input('GameID');
-        
-        $game = Game::find($gameid);
-        
-        return redirect('game/play/' . $game->GameID);
-    }
+    } 
     
     public function play(Game $game)
     {
-        if($game->Players->count() >= 2) {
-            // Guard against too many players
-            return redirect('/')->with('errors', collect(['Too Many Players in That Game']));
-        }
-        
         $playerid = session('playerid', null);
         
         if(is_null($playerid)) {
             // Player is not already in session
             
-            $color = $game->Players->count();
+            if($game->Players->count() >= 1) {
+                // Guard against someone else trying to play the same game
+                return redirect('/')->with('errors', collect(['Someone is already in that Game']));
+            }
+            
+            $color = rand(0,1);
             
             $player = Player::create([
                 'Color' => $color
             ]);
             
             $game->Players()->save($player);
+            
+            $player->SetupShips();
             
             // Store new player in session
             session(['playerid' => $player->PlayerID]);
