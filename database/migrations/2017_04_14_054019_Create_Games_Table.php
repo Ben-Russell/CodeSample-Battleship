@@ -14,10 +14,7 @@ class CreateGamesTable extends Migration
     public function up()
     {
         Schema::create('Games', function (Blueprint $table) {
-            $table->increments('GameID')
-				->unique()
-				->primary()
-				->unsigned();
+            $table->increments('GameID');
             
             $table->string('Password', 60);
             

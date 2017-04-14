@@ -15,10 +15,7 @@ class CreateShipsTable extends Migration
     {
         Schema::create('Ships', function (Blueprint $table) {
             
-            $table->increments('ShipID')
-				->unique()
-				->primary()
-				->unsigned();
+            $table->increments('ShipID');
             
             $table->string('Name');
             

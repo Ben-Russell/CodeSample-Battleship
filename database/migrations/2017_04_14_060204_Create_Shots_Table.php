@@ -15,10 +15,7 @@ class CreateShotsTable extends Migration
     {
         Schema::create('Shots', function (Blueprint $table) {
             
-            $table->increments('ShotsID')
-				->unique()
-				->primary()
-				->unsigned();
+            $table->increments('ShotsID');
             
             $table->integer('PositionX');
             
